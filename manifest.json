@@ -2,7 +2,7 @@
   "short_name": "書き初め",
   "name": "スマホで書き初め",
   "display": "standalone",
-  "start_url": "/",
+  "start_url": "https://credo-negi.github.io/kakizome/",
   "icons": [
       {
           "src": "icon.png",
