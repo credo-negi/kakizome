@@ -20,6 +20,7 @@ const aboutPage = [
             {
                 type: "content",
                 tagName: "p",
+                classNames: ["ja"],
                 contents: [
                     "スマホやタブレットで書き初めができるアプリです．作品は画像としてダウンロードすることができます．"
                 ]
@@ -27,8 +28,25 @@ const aboutPage = [
             {
                 type: "content",
                 tagName: "p",
+                classNames: ["ja"],
                 contents: [
                     "筆先の形状やサイズ，和紙のサイズなどを変更できます．また，和紙を拡大することで，小さい画面でもかきやすくなります．画面下部のボタンから，設定項目を探してみてください．"
+                ]
+            },
+            {
+                type: "content",
+                tagName: "p",
+                classNames: ["en"],
+                contents: [
+                    "With this web app, you can enjoy *Kakizome (Drawing Kanji or other Japanese Words with a brush on New Year Day)* on your phone or on your tablet. You can also download your artwork as an image file."
+                ]
+            },
+            {
+                type: "content",
+                tagName: "p",
+                classNames: ["en"],
+                contents: [
+                    "You can adjust the brush shape, the brush size, and the paper size. By expanding the paper with your fingers, you can easily draw anything on the small screen on your device. Tap the buttons at the bottom of the screen and customize various properties as you like."
                 ]
             }
         ]
@@ -41,25 +59,83 @@ const aboutPage = [
             {
                 type: "content",
                 tagName: "h2",
+                classNames: ["ja"],
                 contents: ["免責事項"]
             },
             {
                 type: "content",
                 tagName: "p",
-                contents: ["このWebアプリでは，利用者の閲覧履歴や属性といった利用者の個人情報を一切入手しません．また，利用者がこのWebアプリを利用して作成した作品を，このWebアプリを経由して取得したり，サーバーに保存したりすることもございません．"]
+                classNames: ["ja"],
+                contents: ["このWebアプリは，ユーザーの閲覧履歴や属性などの個人情報を取得することはありません．また，利用者がこのWebアプリで作成した作品を本ウェブアプリ経由で取得したり、サーバーに保存したりすることはありません。"]
             },
             {
                 type: "content",
                 tagName: "p",
+                classNames: ["ja"],
                 contents: ["作品をダウンロードし，SNSなどで共有する場合は，公序良俗に反することのないように，ご配慮をお願いいたします．"]
             },
             {
                 type: "content",
                 tagName: "p",
+                classNames: ["ja"],
                 contents: ["このWebアプリを使用したことにより，利用者が何らかの損害やトラブルに巻き込まれた場合であっても，このWebアプリの管理者は一切の責任を負うことができません．あらかじめご了承ください．"]
-            }
+            },
+            {
+                type: "content",
+                tagName: "h2",
+                classNames: ["en"],
+                contents: ["Disclaimer"]
+            },
+            {
+                type: "content",
+                tagName: "p",
+                classNames: ["en"],
+                contents: ["This web app does not obtain any personal information such as the user's browsing history or attributes. In addition, the works you created with this web app will not be obtained via this web app, nor will they be stored on the servers."]
+            },
+            {
+                type: "content",
+                tagName: "p",
+                classNames: ["en"],
+                contents: ["Please be careful not to offend public order and morals when downloading and sharing your artwork on social networking sites."]
+            },
+            {
+                type: "content",
+                tagName: "p",
+                classNames: ["en"],
+                contents: ["The administrator of this Web application cannot be held responsible for any damage or trouble that users may encounter as a result of using this Web application. Thank you for your attention."]
+            },
         ]
     },
+];
+const download = [
+    {
+        type: "content",
+        tagName: "div",
+        classNames: ["kakizome--setting--section"],
+        contents: [
+            {
+                type: "content",
+                tagName: "h2",
+                contents: ["ご利用ありがとうございます"],
+            },
+            {
+                type: "content",
+                tagName: "p",
+                contents: ["作品の画像は自動的にkakizome.pngという.pngファイル形式でダウンロードされます．"]
+            },
+            {
+                type: "content",
+                tagName: "p",
+                contents: ["お知り合いにもこのWebアプリを教えてあげてください．"]
+            },
+            {
+                type: "content",
+                tagName: "button",
+                id: "url-to-clipboard",
+                contents: ["URLをコピー"]
+            }
+        ]
+    }
 ];
 const penSettings = [
     {
@@ -482,7 +558,7 @@ export default class Settings extends Dialog {
         return __awaiter(this, void 0, void 0, function* () {
             const link = document.createElement('a');
             link.href = ctx.canvas.toDataURL("image/png");
-            link.download = "hoge.png";
+            link.download = "kakizome.png";
             link.click();
         });
     }
