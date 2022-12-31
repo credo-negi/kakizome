@@ -1,0 +1,316 @@
+export class Scaler {
+    constructor(canvas, canvasMode) {
+        this.canvas = canvas;
+        this.canvasWrapper = this.canvas.parentElement;
+        this.canvasMode = canvasMode;
+        this._mode = "draw";
+        this._touch = true;
+        this._scroll = { x: 0, y: 0 };
+        this._lastDiff = { x: 0, y: 0 };
+        this.touchData = {
+            initial: [
+                { x: 0, y: 0 }, { x: 0, y: 0 }
+            ],
+            now: [
+                { x: 0, y: 0 }, { x: 0, y: 0 }
+            ],
+            distance: 0,
+            scale: {
+                now: 1,
+                last: 1
+            }
+        };
+        this.initializeCanvasTouchData = this.initializeCanvasTouchData.bind(this);
+        this.changeCanvasTouchData = this.changeCanvasTouchData.bind(this);
+        this.finalizeCanvasTouchData = this.finalizeCanvasTouchData.bind(this);
+        this.changeCanvasMode = this.changeCanvasMode.bind(this);
+        this.init();
+    }
+    get mode() {
+        return this._mode;
+    }
+    set mode(mode) {
+        this._mode = mode;
+    }
+    get touch() {
+        return this._touch;
+    }
+    set touch(state) {
+        this._touch = state;
+    }
+    get scroll() {
+        return this._scroll;
+    }
+    set scroll(arr) {
+        this._scroll = arr;
+    }
+    get lastDiff() {
+        return this._lastDiff;
+    }
+    set lastDiff(arr) {
+        this._lastDiff = arr;
+    }
+    set initialTouch(arr) {
+        this.touchData.initial[arr.i] = {
+            x: arr.x, y: arr.y
+        };
+        this.touchData.distance = Math.sqrt(Math.pow(this.touchData.initial[1].x - this.touchData.initial[0].x, 2) +
+            Math.pow(this.touchData.initial[1].y - this.touchData.initial[0].y, 2));
+    }
+    set nowTouch(arr) {
+        this.touchData.now[arr.i] = {
+            x: arr.x, y: arr.y
+        };
+        const distance = Math.sqrt(Math.pow(this.touchData.now[1].x - this.touchData.now[0].x, 2) +
+            Math.pow(this.touchData.now[1].y - this.touchData.now[0].y, 2));
+        const lastScale = this.touchData.scale.last;
+        const newScale = lastScale + ((distance - this.touchData.distance) / this.touchData.distance);
+        if (newScale <= 3 && newScale >= 1) {
+            this.touchData.scale.now = newScale;
+        }
+        else if (newScale < 1) {
+            this.touchData.scale.now = 1;
+        }
+        else {
+            this.touchData.scale.now = 3;
+        }
+    }
+    changeCanvasScale() {
+        if (this.mode === "touch" && this.touch === true) {
+            const scale = { now: this.touchData.scale.now, last: this.touchData.scale.last };
+            this.canvas.style.setProperty('--scale', scale.now.toString());
+            const canvasSize = {
+                w: this.canvas.clientWidth * scale.now,
+                h: this.canvas.clientHeight * scale.now
+            };
+            if (this.canvasWrapper instanceof HTMLElement) {
+                const diff = {
+                    x: canvasSize.w - this.canvasWrapper.clientWidth,
+                    y: canvasSize.h - this.canvasWrapper.clientHeight
+                };
+                this.canvasWrapper.scroll(diff.x / 2 + (this.scroll.x - this.lastDiff.x / 2) * (scale.now / scale.last), diff.y / 2 + (this.scroll.y - this.lastDiff.y / 2) * (scale.now / scale.last));
+            }
+            requestAnimationFrame(this.changeCanvasScale.bind(this));
+        }
+    }
+    initializeCanvasTouchData(ev) {
+        const touches = ev.touches;
+        if (touches.length < 2)
+            return;
+        if (this.mode === "touch") {
+            this.touch = true;
+            if (this.canvasWrapper instanceof HTMLElement) {
+                this.scroll = {
+                    x: this.canvasWrapper.scrollLeft,
+                    y: this.canvasWrapper.scrollTop
+                };
+            }
+            for (let i = 0; i < 2; i++) {
+                this.initialTouch = {
+                    i: i,
+                    x: touches[i].clientX,
+                    y: touches[i].clientY
+                };
+                this.nowTouch = {
+                    i: i,
+                    x: touches[i].clientX,
+                    y: touches[i].clientY
+                };
+            }
+            this.changeCanvasScale();
+        }
+    }
+    changeCanvasTouchData(ev) {
+        const touches = ev.touches;
+        if (touches.length < 2)
+            return;
+        if (this.mode === "touch") {
+            for (let i = 0; i < 2; i++) {
+                this.nowTouch = {
+                    i: i,
+                    x: touches[i].clientX,
+                    y: touches[i].clientY
+                };
+            }
+        }
+    }
+    finalizeCanvasTouchData(ev) {
+        this.touch = false;
+        this.touchData.scale.last = this.touchData.scale.now;
+        if (this.canvasWrapper instanceof HTMLElement) {
+            this.scroll = {
+                x: this.canvasWrapper.scrollLeft,
+                y: this.canvasWrapper.scrollTop
+            };
+            this.lastDiff = {
+                x: this.canvas.clientWidth * this.touchData.scale.last - this.canvasWrapper.clientWidth,
+                y: this.canvas.clientHeight * this.touchData.scale.last - this.canvasWrapper.clientHeight
+            };
+        }
+    }
+    changeCanvasMode(ev) {
+        const target = ev.target;
+        if (target instanceof HTMLInputElement) {
+            this.mode = (target.checked ? "draw" : "touch");
+        }
+    }
+    init() {
+        this.canvas.addEventListener('touchstart', this.initializeCanvasTouchData);
+        this.canvas.addEventListener('touchmove', this.changeCanvasTouchData);
+        this.canvas.addEventListener('touchend', this.finalizeCanvasTouchData);
+        this.canvasMode.addEventListener('change', this.changeCanvasMode);
+    }
+}
+export default class Draw extends Scaler {
+    constructor(canvas, canvasMode) {
+        super(canvas, canvasMode);
+        this._isDtawing = false;
+        this._lastPoint = { x: 0, y: 0 };
+        this._lastPressure = 0;
+        this._shapeAngle = Math.PI / (-4);
+        this.editableSettings = {
+            ["brush-shape"]: "brush",
+            ["brush-size"]: 80,
+            ["paper-size"]: "hanshi"
+        };
+        this.ctx = canvas.getContext('2d');
+        this.startDrawing = this.startDrawing.bind(this);
+        this.whileDrawing = this.whileDrawing.bind(this);
+        this.endDrawing = this.endDrawing.bind(this);
+        this.initDraw();
+    }
+    get isDrawing() {
+        return this._isDtawing;
+    }
+    set isDrawing(flag) {
+        this._isDtawing = flag;
+    }
+    get lastPoint() {
+        return this._lastPoint;
+    }
+    set lastPoint(arr) {
+        this._lastPoint = arr;
+    }
+    get lastPressure() {
+        return this._lastPressure;
+    }
+    set lastPressure(press) {
+        this._lastPressure = press;
+    }
+    get shapeAngle() {
+        return this._shapeAngle;
+    }
+    set shapeAngle(angle) {
+        this._shapeAngle = angle;
+    }
+    distanceBetween(point1, point2) {
+        return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+    }
+    angleBetween(point1, point2) {
+        return Math.atan2(point2.x - point1.x, point2.y - point1.y);
+    }
+    calculateShapePlot(center, stepNum, rad) {
+        let list = [];
+        for (let i = 0; i < stepNum; i++) {
+            const shapeX = Math.sin(2 * (i - stepNum / 2) * Math.PI / stepNum) * rad / 4;
+            const shapeY = (0.5 - Math.cos((i - stepNum / 2) * Math.PI / stepNum)) * rad * (-1);
+            const x = center.x + shapeX * Math.cos(this.shapeAngle) - shapeY * Math.sin(this.shapeAngle);
+            const y = center.y + shapeX * Math.sin(this.shapeAngle) + shapeY * Math.cos(this.shapeAngle);
+            const set = [x, y];
+            list.push(set);
+        }
+        return list;
+    }
+    drawBrushFootprint(arr) {
+        if (!this.ctx)
+            return;
+        const press = this.lastPressure + arr.stepPress * (arr.i + 1);
+        const brushSize = this.editableSettings["brush-size"];
+        const xrad = (press >= 0.4) ? (brushSize * (press - 0.4) + 16) : (brushSize * press / 2);
+        const stepNum = 20;
+        const center = { x: arr.x + 20, y: arr.y + 20 };
+        const shapePlot = this.calculateShapePlot(center, stepNum, xrad);
+        this.ctx.beginPath();
+        this.ctx.moveTo(shapePlot[0][0], shapePlot[0][1]);
+        for (const item of shapePlot) {
+            this.ctx.lineTo(item[0], item[1]);
+        }
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
+    drawCircleFootprint(arr) {
+        if (!this.ctx)
+            return;
+        const press = this.lastPressure + arr.stepPress * (arr.i + 1);
+        const brushSize = this.editableSettings["brush-size"];
+        const rad = (press >= 0.4) ? (brushSize * (press - 0.4) + 16) : (brushSize * press / 2);
+        this.ctx.beginPath();
+        this.ctx.arc(arr.x + 20, arr.y + 20, rad, 0, Math.PI * 2);
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
+    startDrawing(ev) {
+        ev.preventDefault();
+        if (!ev.isPrimary)
+            return;
+        this.isDrawing = true;
+        let scrollCal = { w: 0, h: 0 };
+        if (this.canvasWrapper instanceof HTMLElement) {
+            scrollCal = {
+                w: this.canvasWrapper.scrollLeft,
+                h: this.canvasWrapper.scrollTop
+            };
+        }
+        const calibration = this.canvas.width / this.canvas.offsetWidth;
+        this.lastPoint = { x: (ev.offsetX) * calibration, y: (ev.offsetY) * calibration };
+        this.lastPressure = ev.pressure;
+    }
+    whileDrawing(ev) {
+        ev.preventDefault();
+        if (!this.isDrawing || this.mode !== "draw" || !ev.isPrimary)
+            return;
+        let scrollCal = { w: 0, h: 0 };
+        if (this.canvasWrapper instanceof HTMLElement) {
+            scrollCal = {
+                w: this.canvasWrapper.scrollLeft,
+                h: this.canvasWrapper.scrollTop
+            };
+        }
+        const calibration = this.canvas.width / this.canvas.offsetWidth;
+        const currentPoint = { x: (ev.offsetX) * calibration, y: (ev.offsetY) * calibration };
+        const currentPressure = ev.pressure;
+        const diffPressure = currentPressure - this.lastPressure;
+        const distance = this.distanceBetween(this.lastPoint, currentPoint);
+        const angle = this.angleBetween(this.lastPoint, currentPoint);
+        const step = 0.5;
+        const stepPressure = diffPressure / (distance / step);
+        if (!this.ctx)
+            return;
+        for (let i = 0; i < distance; i += step) {
+            const x = this.lastPoint.x + (Math.sin(angle) * i) - 25;
+            const y = this.lastPoint.y + (Math.cos(angle) * i) - 25;
+            const arr = { i: i, x: x, y: y, stepPress: stepPressure };
+            if (this.editableSettings["brush-shape"] === "brush")
+                this.drawBrushFootprint(arr);
+            else
+                this.drawCircleFootprint(arr);
+        }
+        this.lastPoint = currentPoint;
+        this.lastPressure = currentPressure;
+    }
+    endDrawing(ev) {
+        ev.preventDefault();
+        if (!ev.isPrimary)
+            return;
+        this.isDrawing = false;
+    }
+    initDraw() {
+        if (this.ctx) {
+            this.ctx.fillStyle = "black";
+            this.ctx.strokeStyle = 'black';
+        }
+        this.canvas.addEventListener('pointerdown', this.startDrawing);
+        this.canvas.addEventListener('pointermove', this.whileDrawing);
+        this.canvas.addEventListener('pointerup', this.endDrawing);
+    }
+}

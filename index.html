@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>スマホで書き初め</title>
+    <meta name="description" content="スマホやタブレットで書き初めをしよう！">
+    <meta property="og:url" content="/hogehoge">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="スマホで書き初め">
+    <meta property="og:description" content="スマホやタブレットで書き初めをしよう！">
+    <meta property="og:site_name" content="スマホで書き初め">
+    <meta property="og:image" content="./twitter-card.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="/hogehoge">
+    <meta name="twitter:title" content="スマホで書き初め">
+    <meta name="twitter:description" content="スマホやタブレットで書き初めをしよう！">
+    <meta name="twitter:image" content="./twitter-card.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.webmanifest">
+    <script async src="https://cdn.jsdelivr.net/npm/pwacompat" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body class="kakizome--body">
+    <input type="checkbox" id="canvas-mode" checked>
+    <div class="kakizome--main">
+      <!-- 
+        半紙: 953 x 1311
+        埼玉判: 1024 x 3071
+      -->
+      <div class="kakizome--kakizome_area">
+        <canvas id="canvas" class="kakizome--canvas full-mode"
+         width="953" height="1311" data-size="hanshi"></canvas>
+      </div>
+      <div class="kakizome--footer">
+        <div class="kakizome--footer--item">
+          <button class="kakizome--footer--button dialog-opener" data-dialog="about">
+            <img class="kakizome--footer--button--icon theme--dark" src="./assets/menu_white_24dp.svg">
+            <span class="kakizome--footer--button--text ja">
+              詳細
+            </span>
+            <span class="kakizome--footer--button--text en">
+              About
+            </span>
+          </button>
+          <!-- <div class="kakizome--footer--item--content">
+            <button class="kakizome--footer--item--content--button">
+              <span class="kakizome--footer--item--content--button--text">
+                保存
+              </span>
+            </button>
+          </div> -->
+        </div>
+        <div class="kakizome--footer--item">
+          <button class="kakizome--footer--button" id="download-button">
+            <img class="kakizome--footer--button--icon theme--dark" src="./assets/file_download_white_24dp.svg">
+            <span class="kakizome--footer--button--text ja">
+              ダウンロード
+            </span>
+            <span class="kakizome--footer--button--text en">
+              Download
+            </span>
+          </button>
+          <!-- <div class="kakizome--footer--item--content">
+            <button class="kakizome--footer--item--content--button">
+              <span class="kakizome--footer--item--content--button--text">
+                保存
+              </span>
+            </button>
+          </div> -->
+        </div>
+        <div class="kakizome--footer--item">
+          <button class="kakizome--footer--button dialog-opener" data-dialog="pen-settings">
+            <img class="kakizome--footer--button--icon theme--dark" src="./assets/border_color_white_24dp.svg">
+            <span class="kakizome--footer--button--text ja">
+              筆の設定
+            </span>
+            <span class="kakizome--footer--button--text en">
+              Brush
+            </span>
+          </button>
+          <!-- <div class="kakizome--footer--item--content">
+            <button class="kakizome--footer--item--content--button">
+              <span class="kakizome--footer--item--content--button--text">
+                保存
+              </span>
+            </button>
+          </div> -->
+        </div>
+        <div class="kakizome--footer--item">
+          <button class="kakizome--footer--button dialog-opener" data-dialog="paper-settings">
+            <img class="kakizome--footer--button--icon theme--dark" src="./assets/description_white_24dp.svg">
+            <span class="kakizome--footer--button--text ja">
+              和紙の設定
+            </span>
+            <span class="kakizome--footer--button--text en">
+              Paper
+            </span>
+          </button>
+          <!-- <div class="kakizome--footer--item--content">
+            <button class="kakizome--footer--item--content--button">
+              <span class="kakizome--footer--item--content--button--text">
+                保存
+              </span>
+            </button>
+          </div> -->
+        </div>
+        <div class="kakizome--footer--item">
+          <label for="canvas-mode" class="kakizome--footer--button">
+            <img data-mode="draw" class="kakizome--footer--button--icon theme--dark" src="./assets/edit_white_24dp.svg">
+            <img data-mode="touch" class="kakizome--footer--button--icon theme--dark" src="./assets/pan_tool_alt_white_24dp.svg">
+            <span class="kakizome--footer--button--text ja">
+              モード: <span data-mode="draw">筆記</span><span data-mode="touch">移動</span>
+            </span>
+            <span class="kakizome--footer--button--text en">
+              Mode: <span data-mode="draw">Draw</span><span data-mode="touch">Pan</span>
+            </span>
+          </label>
+        </div>
+      </div>
+      <dialog id="setting-dialog" class="kakizome--dialog">
+      </dialog>
+    </div>
+  </body>
+  <script type="module" src="./js/index.m.js"></script>
+</html>

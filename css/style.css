@@ -1,0 +1,294 @@
+html, body {
+  font-family: "Roboto", "Noto Sans JP", "Hiragino Kaku Gothic", "Meiryo", sans-serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[lang=ja] .en {
+  display: none;
+}
+html[lang=en] .ja {
+  display: none;
+}
+
+input[type=checkbox], input[type=radio] {
+  display: none;
+}
+
+body {
+  width: 100%;
+  height: 100dvh;
+  max-height: 100%;
+  overflow: hidden;
+  background-color: var(--theme-background);
+  display: flex;
+  justify-content: center;
+  touch-action: none;
+}
+
+.kakizome--main {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 56px;
+  max-width: 1024px;
+}
+.kakizome--main .kakizome--kakizome_area {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.kakizome--main .kakizome--kakizome_area .kakizome--canvas {
+  background-color: white;
+  scale: var(--scale);
+  transform-origin: 0 0;
+  background-size: 100% 100%;
+  background-blend-mode: color;
+}
+.kakizome--main .kakizome--kakizome_area .kakizome--canvas[data-size=hanshi] {
+  background-image: url(../assets/shitajiki_hanshi.png);
+  background-color: rgba(255, 255, 255, 0.33);
+}
+.kakizome--main .kakizome--kakizome_area .kakizome--canvas[data-size=saitama] {
+  background-image: url(../assets/shitajiki_saitama.png);
+  background-color: rgba(255, 255, 255, 0.33);
+}
+.kakizome--main .kakizome--kakizome_area .kakizome--canvas[data-size="16-9"] {
+  background-image: url(../assets/shitajiki_16-9.png);
+  background-color: rgba(255, 255, 255, 0.33);
+}
+.kakizome--main .kakizome--kakizome_area .kakizome--canvas.full-mode {
+  max-width: 100%;
+  max-height: 100%;
+}
+.kakizome--main .kakizome--footer {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  background-color: var(--theme-primary);
+  color: var(--theme-on-primary);
+  border-radius: 8px 8px 0 0;
+  padding: 4px 8px;
+  overflow: hidden;
+}
+.kakizome--main .kakizome--footer .kakizome--footer--item {
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+.kakizome--main .kakizome--footer .kakizome--footer--item .kakizome--footer--button {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 4px;
+}
+.kakizome--main .kakizome--footer .kakizome--footer--item .kakizome--footer--button::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.33);
+  opacity: 0;
+  scale: 1;
+  transition: opacity 150ms, scale 150ms;
+}
+.kakizome--main .kakizome--footer .kakizome--footer--item .kakizome--footer--button:active::before {
+  opacity: 1;
+  scale: 1.125;
+}
+.kakizome--main .kakizome--footer .kakizome--footer--item .kakizome--footer--button .kakizome--footer--button--text {
+  font-size: 0.75rem;
+}
+.kakizome--main .kakizome--footer .kakizome--footer--item .kakizome--footer--item--content {
+  position: absolute;
+  width: 256px;
+  bottom: 56px;
+}
+.kakizome--main .kakizome--dialog {
+  width: 100%;
+  max-width: 1024px;
+  display: grid;
+  grid-template-rows: 56px 1fr;
+  height: 100dvh;
+  background-color: var(--theme-background);
+  border: none;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  top: 50%;
+  left: 50%;
+  translate: -50% calc(-50% + 8px);
+  opacity: 0;
+  scale: 0.975;
+  pointer-events: none;
+}
+.kakizome--main .kakizome--dialog .kakizome--dialog--header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--theme-text);
+}
+.kakizome--main .kakizome--dialog .kakizome--dialog--header .kakizome--dialog--header--primary .kakizome--dialog--header--primary--text {
+  font-size: 1.225rem;
+  padding-left: 16px;
+}
+.kakizome--main .kakizome--dialog .kakizome--dialog--header .kakizome--dialog--header--button {
+  width: 56px;
+  height: 56px;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.kakizome--main .kakizome--dialog .kakizome--dialog--content {
+  overflow-y: auto;
+}
+.kakizome--main .kakizome--dialog::-webkit-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: block;
+  opacity: 0;
+  -webkit-transition: opacity 150ms;
+  transition: opacity 150ms;
+}
+.kakizome--main .kakizome--dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: block;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.kakizome--main .kakizome--dialog[open] {
+  scale: 1;
+  opacity: 1;
+  translate: -50% -50%;
+  transition: translate 150ms, scale 150ms, opacity 150ms;
+  pointer-events: initial;
+}
+.kakizome--main .kakizome--dialog[open]::-webkit-backdrop {
+  opacity: 1;
+}
+.kakizome--main .kakizome--dialog[open]::backdrop {
+  opacity: 1;
+}
+.kakizome--main .kakizome--dialog.dialog--closing {
+  opacity: 0;
+  scale: 0.975;
+  translate: -50% calc(-50% + 8px);
+}
+.kakizome--main .kakizome--dialog.dialog--closing::-webkit-backdrop {
+  opacity: 0;
+}
+.kakizome--main .kakizome--dialog.dialog--closing::backdrop {
+  opacity: 0;
+}
+.kakizome--main .kakizome--setting--section {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--title {
+  margin-bottom: 16px;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item label {
+  padding: 16px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item label figure {
+  width: 72px;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item label figure img {
+  width: 100%;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item label::before {
+  content: "";
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  border-radius: 12px;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  background-color: var(--theme-primary);
+  opacity: 0;
+  transition: opacity 150ms;
+  z-index: -1;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item *:checked ~ label {
+  border: 2px solid var(--theme-primary);
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item *:checked ~ label::before {
+  opacity: 1;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper.kakizome--setting--section--item--wrapper--row {
+  flex-direction: row;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper.kakizome--setting--section--item--wrapper--row .kakizome--setting--section--item {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0%;
+  height: 100%;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper.kakizome--setting--section--item--wrapper--row .kakizome--setting--section--item label {
+  flex-direction: column;
+}
+.kakizome--main .kakizome--setting--section h1, .kakizome--main .kakizome--setting--section h2, .kakizome--main .kakizome--setting--section h3, .kakizome--main .kakizome--setting--section h4, .kakizome--main .kakizome--setting--section h5, .kakizome--main .kakizome--setting--section h6, .kakizome--main .kakizome--setting--section p {
+  margin-bottom: 16px;
+}
+
+#canvas-mode ~ .kakizome--main *[data-mode=draw] {
+  display: none;
+}
+#canvas-mode:checked ~ .kakizome--main .kakizome--kakizome_area {
+  overflow: hidden;
+}
+#canvas-mode:checked ~ .kakizome--main *[data-mode=touch] {
+  display: none;
+}
+#canvas-mode:checked ~ .kakizome--main *[data-mode=draw] {
+  display: initial;
+}
+
+:root {
+  --theme-background: #fff;
+  --theme-text: #000;
+  --theme-primary: rgb(93, 0, 0);
+  --theme-primary-alpha: rgba(93, 0, 0, 0.8);
+  --theme-on-primary: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --theme-background: #464646;
+    --theme-text: rgba(255,255,255,.8);
+  }
+}/*# sourceMappingURL=style.css.map */
