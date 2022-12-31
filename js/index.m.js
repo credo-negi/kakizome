@@ -9,6 +9,7 @@ const draw = new Draw(canvas, canvasModeCheckbox);
 const settings = new Settings(draw, dialog, dialogOpener);
 downloadButton.addEventListener('click', settings.downloadCreatedImg);
 const user_language = window.navigator.language;
-if (user_language !== "ja") {
+if (user_language !== "ja" && user_language !== "ja-JP") {
+    console.log(user_language);
     document.documentElement.lang = "en";
 }
