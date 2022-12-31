@@ -175,13 +175,13 @@ const paperSettings = [
                         type: "content",
                         tagName: "span",
                         classNames: ["en"],
-                        contents: ["Hanshi (000x000)"]
+                        contents: ["Hanshi (24.2cm x 33.3cm)"]
                     },
                     {
                         type: "content",
                         tagName: "span",
                         classNames: ["ja"],
-                        contents: ["半紙 (000x000)"]
+                        contents: ["半紙 (24.2cm x 33.3cm)"]
                     }
                 ],
             },
@@ -192,13 +192,13 @@ const paperSettings = [
                         type: "content",
                         tagName: "span",
                         classNames: ["en"],
-                        contents: ["Saitama Style (000x000)"]
+                        contents: ["Saitama Style (26 cm x 78cm)"]
                     },
                     {
                         type: "content",
                         tagName: "span",
                         classNames: ["ja"],
-                        contents: ["埼玉判 (000x000)"]
+                        contents: ["埼玉判 (26cm x 78cm)"]
                     }
                 ]
             },
