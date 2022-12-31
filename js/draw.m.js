@@ -170,8 +170,9 @@ export default class Draw extends Scaler {
         this._shapeAngle = Math.PI / (-4);
         this.editableSettings = {
             ["brush-shape"]: "brush",
-            ["brush-size"]: 80,
-            ["paper-size"]: "hanshi"
+            ["brush-size"]: 100,
+            ["paper-size"]: "hanshi",
+            ["pressure"]: false
         };
         this.ctx = canvas.getContext('2d');
         this.startDrawing = this.startDrawing.bind(this);
@@ -269,16 +270,9 @@ export default class Draw extends Scaler {
         ev.preventDefault();
         if (!this.isDrawing || this.mode !== "draw" || !ev.isPrimary)
             return;
-        let scrollCal = { w: 0, h: 0 };
-        if (this.canvasWrapper instanceof HTMLElement) {
-            scrollCal = {
-                w: this.canvasWrapper.scrollLeft,
-                h: this.canvasWrapper.scrollTop
-            };
-        }
         const calibration = this.canvas.width / this.canvas.offsetWidth;
         const currentPoint = { x: (ev.offsetX) * calibration, y: (ev.offsetY) * calibration };
-        const currentPressure = ev.pressure;
+        const currentPressure = this.editableSettings["pressure"] ? ev.pressure : 1;
         const diffPressure = currentPressure - this.lastPressure;
         const distance = this.distanceBetween(this.lastPoint, currentPoint);
         const angle = this.angleBetween(this.lastPoint, currentPoint);

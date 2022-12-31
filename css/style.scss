@@ -231,10 +231,27 @@ body {
             z-index: -1;
           }
         }
+        *[type="checkbox"] ~ label {
+          &::after {
+            content: "";
+            background-image: url(../assets/toggle_on_white_24dp.svg);
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 24px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 16px;
+            rotate: 180deg;
+          }
+        }
         *:checked ~ label {
           border: 2px solid var(--theme-primary);
           &::before {
             opacity: 1;
+          }
+          &::after {
+            rotate: 0deg;
           }
         }
       }

@@ -2,7 +2,8 @@ import Draw from "./draw.m.js";
 
 type Items = {
   value: string,
-  label: DialogContentItem[]
+  label: DialogContentItem[],
+  checked?: boolean
 }
 type InputSelection = {
   type: "checkbox" | "radio",
@@ -168,6 +169,35 @@ const penSettings: (InputSelection | InputNumber | DialogContentItem)[] = [
     max: 200,
     min: 10,
     step: 5
+  },
+  {
+    type: "checkbox",
+    name: "pressure",
+    title: {
+      ja: "筆圧検知",
+      en: "Pressure"
+    },
+    media: true,
+    items: [
+      {
+        value: "prssure",
+        checked: false,
+        label: [
+          {
+            type: "content",
+            tagName: "span",
+            classNames: ["en"],
+            contents: ["Enable Dynamic Pressure"]
+          },
+          {
+            type: "content",
+            tagName: "span",
+            classNames: ["ja"],
+            contents: ["筆圧検知を有効にする"]
+          }
+        ]
+      },
+    ]
   }
 ];
 const paperSettings: (InputSelection | InputNumber | DialogContentItem)[] = [
@@ -396,26 +426,36 @@ export default class Settings extends Dialog {
 
   onChangeSettingValue (ev: Event) {
     const target = ev.target;
-    if (target instanceof HTMLInputElement && (target.checked || target.type === "range")) {
+    if (target instanceof HTMLInputElement ) {
       const targetName = target.name as keyof Draw["editableSettings"];
-      if ( targetName === "brush-size" ) {
-        this.draw.editableSettings[targetName] = parseInt(target.value, 10);
-      } else if ( targetName === "paper-size" ) {
-        const size: { 
-          [key: string]: { w: number, h: number } 
-        } = {
-          "hanshi": { w: 953, h: 1311 },
-          "saitama": { w: 1024, h: 3071 },
-          "16-9": { w: 720, h: 1280 }
-        }
-        const sizeName = target.value as keyof (typeof size);
-        this.draw.editableSettings[targetName] = target.value;
-        this.draw.canvas.dataset.size = target.value;
-        this.draw.canvas.width = size[sizeName].w;
-        this.draw.canvas.height = size[sizeName].h;
 
-      } else {
-        this.draw.editableSettings[targetName] = target.value;
+      switch (targetName) {
+        case "brush-size":
+          this.draw.editableSettings[targetName] = parseInt(target.value, 10);
+          break;
+
+        case "paper-size":
+          const size: { 
+            [key: string]: { w: number, h: number } 
+          } = {
+            "hanshi": { w: 953, h: 1311 },
+            "saitama": { w: 1024, h: 3071 },
+            "16-9": { w: 720, h: 1280 }
+          }
+          const sizeName = target.value as keyof (typeof size);
+          this.draw.editableSettings[targetName] = target.value;
+          this.draw.canvas.dataset.size = target.value;
+          this.draw.canvas.width = size[sizeName].w;
+          this.draw.canvas.height = size[sizeName].h;
+          break;
+
+        case "pressure":
+          this.draw.editableSettings[targetName] = (target.checked ? true : false);
+          break;
+
+        default:
+          this.draw.editableSettings[targetName] = target.value;
+          break;
       }
     }
   }
@@ -456,7 +496,7 @@ export default class Settings extends Dialog {
           inputEl.name = item.name;
           inputEl.id = `${item.name}-${inputItem.value}`;
           inputEl.value = inputItem.value;
-          inputEl.checked = (nowValue === inputItem.value)
+          inputEl.checked = (nowValue === inputItem.value || nowValue === true)
           inputEl.classList.add(`kakizome--${item.type}`);
 
           inputEl.addEventListener('change', this.onChangeSettingValue.bind(this));

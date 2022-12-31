@@ -29,7 +29,8 @@ type touchData = {
 type EditableSettings = {
   ["brush-shape"]: string,
   ["brush-size"]: number,
-  ["paper-size"]: string
+  ["paper-size"]: string,
+  ["pressure"]: boolean,
 }
 
 export class Scaler {
@@ -225,7 +226,8 @@ export default class Draw extends Scaler {
   editableSettings: {
     ["brush-shape"]: string,
     ["brush-size"]: number,
-    ["paper-size"]: string
+    ["paper-size"]: string,
+    ["pressure"]: boolean
   };
   ctx: CanvasRenderingContext2D | null;
   constructor(canvas: HTMLCanvasElement, canvasMode: HTMLInputElement) {
@@ -236,8 +238,9 @@ export default class Draw extends Scaler {
     this._shapeAngle = Math.PI / (-4);
     this.editableSettings = {
       ["brush-shape"]: "brush",
-      ["brush-size"]: 80,
-      ["paper-size"]: "hanshi"
+      ["brush-size"]: 100,
+      ["paper-size"]: "hanshi",
+      ["pressure"]: false
     }
     this.ctx = canvas.getContext('2d');
     this.startDrawing = this.startDrawing.bind(this);
@@ -344,16 +347,9 @@ export default class Draw extends Scaler {
   whileDrawing (ev: PointerEvent) {
     ev.preventDefault();
     if ( !this.isDrawing || this.mode !== "draw" || !ev.isPrimary ) return;
-    let scrollCal: {w: number, h: number} = { w: 0, h: 0 };
-    if ( this.canvasWrapper instanceof HTMLElement ) {
-      scrollCal = {
-        w: this.canvasWrapper.scrollLeft,
-        h: this.canvasWrapper.scrollTop
-      }
-    }
     const calibration = this.canvas.width / this.canvas.offsetWidth;
     const currentPoint = { x: (ev.offsetX) * calibration, y: (ev.offsetY) * calibration };
-    const currentPressure = ev.pressure;
+    const currentPressure = this.editableSettings["pressure"] ? ev.pressure : 1;
     const diffPressure = currentPressure - this.lastPressure;
     const distance = this.distanceBetween(this.lastPoint, currentPoint);
     const angle = this.angleBetween(this.lastPoint, currentPoint);

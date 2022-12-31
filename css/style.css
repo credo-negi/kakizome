@@ -243,11 +243,26 @@ body {
   transition: opacity 150ms;
   z-index: -1;
 }
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item *[type=checkbox] ~ label::after {
+  content: "";
+  background-image: url(../assets/toggle_on_white_24dp.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 24px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 16px;
+  rotate: 180deg;
+}
 .kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item *:checked ~ label {
   border: 2px solid var(--theme-primary);
 }
 .kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item *:checked ~ label::before {
   opacity: 1;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item *:checked ~ label::after {
+  rotate: 0deg;
 }
 .kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper.kakizome--setting--section--item--wrapper--row {
   flex-direction: row;
