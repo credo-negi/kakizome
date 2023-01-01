@@ -293,15 +293,9 @@ body {
 }
 }
 :root {
-  --theme-background: #fff;
-  --theme-text: #000;
+  --theme-background: #464646;
+  --theme-text: rgba(255,255,255,.8);;
   --theme-primary: rgb(93, 0, 0);
   --theme-primary-alpha: rgba(93, 0, 0, 0.8);
   --theme-on-primary: #fff;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --theme-background: #464646;
-    --theme-text: rgba(255,255,255,.8);
-  }
 }
