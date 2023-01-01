@@ -26,6 +26,7 @@ body {
   display: flex;
   justify-content: center;
   touch-action: none;
+  color: var(--theme-text);
 }
 
 .kakizome--main {
@@ -138,6 +139,7 @@ body {
   opacity: 0;
   scale: 0.975;
   pointer-events: none;
+  color: var(--theme-text);
 }
 .kakizome--main .kakizome--dialog .kakizome--dialog--header {
   display: flex;
