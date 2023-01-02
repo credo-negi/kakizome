@@ -674,15 +674,11 @@ export default class Settings extends Dialog {
       const ctx_image = image.getContext('2d');
 
       if ( ctx_image ) {
-        const backImg = await this.createImg(ctx_background);
-        ctx_image.drawImage(backImg, 0, 0);
-        backImg.addEventListener('load', async () => {
-          if ( this.draw.ctx ) {
-            ctx_image.drawImage(this.draw.canvas, 0, 0);
-            await this.downloadImg(ctx_image);
-          }
-          
-        })
+        ctx_image.drawImage(background, 0, 0);
+        if ( this.draw.ctx ) {
+          ctx_image.drawImage(this.draw.canvas, 0, 0);
+          await this.downloadImg(ctx_image);
+        }
       }
     }
   }

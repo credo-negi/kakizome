@@ -595,14 +595,11 @@ export default class Settings extends Dialog {
                 image.height = this.draw.canvas.height;
                 const ctx_image = image.getContext('2d');
                 if (ctx_image) {
-                    const backImg = yield this.createImg(ctx_background);
-                    ctx_image.drawImage(backImg, 0, 0);
-                    backImg.addEventListener('load', () => __awaiter(this, void 0, void 0, function* () {
-                        if (this.draw.ctx) {
-                            ctx_image.drawImage(this.draw.canvas, 0, 0);
-                            yield this.downloadImg(ctx_image);
-                        }
-                    }));
+                    ctx_image.drawImage(background, 0, 0);
+                    if (this.draw.ctx) {
+                        ctx_image.drawImage(this.draw.canvas, 0, 0);
+                        yield this.downloadImg(ctx_image);
+                    }
                 }
             }
         });
