@@ -52,6 +52,8 @@ body {
   transform-origin: 0 0;
   background-size: 100% 100%;
   background-blend-mode: color;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .kakizome--main .kakizome--kakizome_area .kakizome--canvas[data-size=hanshi] {
   background-image: url(../assets/shitajiki_hanshi.png);

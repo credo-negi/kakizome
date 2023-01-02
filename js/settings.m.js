@@ -130,9 +130,21 @@ const download = [
             },
             {
                 type: "content",
-                tagName: "button",
-                id: "url-to-clipboard",
-                contents: ["URLをコピー"]
+                tagName: "div",
+                contents: [
+                    {
+                        type: "content",
+                        tagName: "button",
+                        id: "url-to-clipboard",
+                        contents: ["URLをコピー"]
+                    },
+                    {
+                        type: "content",
+                        tagName: "span",
+                        id: "url-to-clipboard-message",
+                        contents: []
+                    }
+                ]
             }
         ]
     }
@@ -396,6 +408,13 @@ export default class Settings extends Dialog {
                     ja: "このWebアプリについて"
                 },
                 items: aboutPage,
+            },
+            "download": {
+                title: {
+                    en: "Download",
+                    ja: "ダウンロード"
+                },
+                items: download,
             }
         };
         this.setupDialog = this.setupDialog.bind(this);
@@ -578,7 +597,10 @@ export default class Settings extends Dialog {
                 if (ctx_image) {
                     ctx_image.drawImage(yield this.createImg(ctx_background), 0, 0);
                     if (this.draw.ctx) {
-                        ctx_image.drawImage(yield this.createImg(this.draw.ctx), 0, 0);
+                        const image = yield this.createImg(this.draw.ctx);
+                        const w = image.width;
+                        const h = image.height;
+                        ctx_image.drawImage(image, 0, 0, w, h, 0, 0, w, h);
                         yield this.downloadImg(ctx_image);
                     }
                 }

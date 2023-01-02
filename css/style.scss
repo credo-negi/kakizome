@@ -51,6 +51,7 @@ body {
       transform-origin: 0 0;
       background-size: 100% 100%;
       background-blend-mode: color;
+      object-fit: contain;
       &[data-size="hanshi"] {
         background-image: url(../assets/shitajiki_hanshi.png);
         background-color: rgba(255,255,255,.33);
