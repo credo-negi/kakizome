@@ -17,9 +17,27 @@ input[type=checkbox], input[type=radio] {
   display: none;
 }
 
+dialog::-webkit-backdrop {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+dialog::backdrop {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
 body {
   width: 100%;
-  height: 100dvh;
+  height: 100%;
   max-height: 100%;
   overflow: hidden;
   background-color: var(--theme-background);
@@ -27,6 +45,11 @@ body {
   justify-content: center;
   touch-action: none;
   color: var(--theme-text);
+}
+@supports (height: 100dvh) {
+  body {
+    height: 100dvh;
+  }
 }
 
 .kakizome--main {
@@ -45,6 +68,34 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.kakizome--main .kakizome--kakizome_area .kakizome--history--controller {
+  position: fixed;
+  top: 0;
+  height: 48px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  z-index: 999;
+  opacity: 1;
+  transition: opacity 150ms;
+}
+.kakizome--main .kakizome--kakizome_area .kakizome--history--controller[data-hide=hide] {
+  opacity: 0;
+}
+.kakizome--main .kakizome--kakizome_area .kakizome--history--controller .kakizome--history--controller--button {
+  width: 36px;
+  height: 36px;
+  border-radius: 100%;
+  background-color: var(--theme-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+.kakizome--main .kakizome--kakizome_area .kakizome--history--controller .kakizome--history--controller--button:disabled {
+  background-color: rgb(200, 200, 200);
 }
 .kakizome--main .kakizome--kakizome_area .kakizome--canvas {
   background-color: white;
@@ -76,7 +127,7 @@ body {
   position: sticky;
   bottom: 0;
   display: flex;
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow);
   background-color: var(--theme-primary);
   color: var(--theme-on-primary);
   border-radius: 8px 8px 0 0;
@@ -130,11 +181,13 @@ body {
   max-width: 1024px;
   display: grid;
   grid-template-rows: 56px 1fr;
-  max-height: 100dvh;
-  height: 100dvh;
+  max-height: 100vh;
+  height: 100%;
   background-color: var(--theme-background);
   border: none;
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow);
+  position: fixed;
+  z-index: 10000;
   top: 50%;
   left: 50%;
   translate: -50% calc(-50% + 8px);
@@ -142,6 +195,12 @@ body {
   scale: 0.975;
   pointer-events: none;
   color: var(--theme-text);
+}
+@supports (height: 100dvh) {
+  .kakizome--main .kakizome--dialog {
+    max-height: 100dvh;
+    height: 100dvh;
+  }
 }
 .kakizome--main .kakizome--dialog .kakizome--dialog--header {
   display: flex;
@@ -179,17 +238,17 @@ body {
   opacity: 0;
   transition: opacity 150ms;
 }
-.kakizome--main .kakizome--dialog[open] {
+.kakizome--main .kakizome--dialog[open], .kakizome--main .kakizome--dialog[data-open=open] {
   scale: 1;
   opacity: 1;
   translate: -50% -50%;
   transition: translate 150ms, scale 150ms, opacity 150ms;
   pointer-events: initial;
 }
-.kakizome--main .kakizome--dialog[open]::-webkit-backdrop {
+.kakizome--main .kakizome--dialog[open]::-webkit-backdrop, .kakizome--main .kakizome--dialog[data-open=open]::-webkit-backdrop {
   opacity: 1;
 }
-.kakizome--main .kakizome--dialog[open]::backdrop {
+.kakizome--main .kakizome--dialog[open]::backdrop, .kakizome--main .kakizome--dialog[data-open=open]::backdrop {
   opacity: 1;
 }
 .kakizome--main .kakizome--dialog.dialog--closing {
@@ -221,6 +280,32 @@ body {
   flex-direction: column;
   align-items: stretch;
 }
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item .kakizome--range {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-color: var(--theme-primary);
+  height: 4px;
+  border-radius: 2px;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item .kakizome--range::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+          appearance: none;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item .kakizome--range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+          appearance: none;
+  content: attr(value);
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: var(--theme-primary);
+  -webkit-transition: scale 150ms;
+  transition: scale 150ms;
+}
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item .kakizome--range:hover::-webkit-slider-thumb {
+  scale: 2;
+}
 .kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item label {
   padding: 16px;
   border-radius: 16px;
@@ -248,7 +333,7 @@ body {
   transition: opacity 150ms;
   z-index: -1;
 }
-.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item *[type=checkbox] ~ label::after {
+.kakizome--main .kakizome--setting--section .kakizome--setting--section--item--wrapper .kakizome--setting--section--item [type=checkbox] ~ label::after {
   content: "";
   background-image: url(../assets/toggle_on_white_24dp.svg);
   background-position: center;
@@ -304,4 +389,5 @@ body {
   --theme-primary: rgb(93, 0, 0);
   --theme-primary-alpha: rgba(93, 0, 0, 0.8);
   --theme-on-primary: #fff;
+  --shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%);
 }/*# sourceMappingURL=style.css.map */
