@@ -132,12 +132,12 @@ const download = [
                 type: "content",
                 tagName: "div",
                 contents: [
-                    {
-                        type: "content",
-                        tagName: "button",
-                        id: "url-to-clipboard",
-                        contents: ["URLをコピー"]
-                    },
+                    // {
+                    //   type: "content",
+                    //   tagName: "button",
+                    //   id: "url-to-clipboard",
+                    //   contents: [ "URLをコピー" ]
+                    // },
                     {
                         type: "content",
                         tagName: "span",
@@ -245,7 +245,7 @@ const penSettings = [
                 ]
             },
         ]
-    }
+    },
 ];
 const paperSettings = [
     {
@@ -308,7 +308,7 @@ const paperSettings = [
                 ]
             }
         ],
-    }
+    },
 ];
 export class Dialog {
     constructor(dialog, dialogOpener) {
@@ -350,14 +350,24 @@ export class Dialog {
         }
     }
     openDialog(ev) {
-        this.dialog.showModal();
+        if (('HTMLDialogElement' in window) && this.dialog instanceof HTMLDialogElement) {
+            this.dialog.showModal();
+        }
+        else {
+            this.dialog.dataset.open = "open";
+        }
     }
     closeDialog(ev) {
         this.dialog.classList.add('dialog--closing');
         setTimeout(() => {
             this.resetDialog();
             this.dialog.classList.remove('dialog--closing');
-            this.dialog.close();
+            if (('HTMLDialogElement' in window) && this.dialog instanceof HTMLDialogElement) {
+                this.dialog.close();
+            }
+            else {
+                this.dialog.dataset.open = "";
+            }
         }, 250);
     }
     get dialogHeaderEN() {
@@ -542,11 +552,13 @@ export default class Settings extends Dialog {
                 range.min = item.min.toString();
                 range.max = item.max.toString();
                 range.value = nowValue.toString();
+                range.setAttribute("value", nowValue.toString());
                 if (item.step)
                     range.step = item.step.toString();
                 range.addEventListener('change', this.onChangeSettingValue.bind(this));
                 inputWrapper.appendChild(range);
                 itemWrapper.appendChild(inputWrapper);
+                break;
             default:
                 break;
         }

@@ -161,7 +161,107 @@ export class Scaler {
         this.canvasMode.addEventListener('change', this.changeCanvasMode);
     }
 }
-export default class Draw extends Scaler {
+export class HistoryHandler extends Scaler {
+    constructor(canvas, canvasMode) {
+        super(canvas, canvasMode);
+        this.ctx = canvas.getContext('2d');
+        this._undo = [];
+        this._redo = [];
+        this._undo_max = 20;
+        this._redo_max = 20;
+        const historyControllerButtonIDs = {
+            ["undo"]: "undo", ["redo"]: "redo", ["clear"]: "refresh"
+        };
+        const historyControllerParent = document.createElement('div');
+        historyControllerParent.classList.add('kakizome--history--controller');
+        this.historyController = {
+            parent: historyControllerParent,
+            buttons: Object.keys(historyControllerButtonIDs).map((key) => {
+                const img = new Image();
+                img.src = `../assets/${historyControllerButtonIDs[key]}_white_24dp.svg`;
+                const button = document.createElement('button');
+                button.classList.add('kakizome--history--controller--button');
+                button.id = key;
+                button.disabled = true;
+                button.appendChild(img);
+                return button;
+            })
+        };
+        this.initHistoryHandler();
+    }
+    pushUndo(data) {
+        if (this._undo.length >= this._undo_max) {
+            this._undo.shift();
+        }
+        this._undo.push(data);
+        this.historyController.buttons[0].disabled = false;
+        this.historyController.buttons[2].disabled = false;
+    }
+    pushRedo(data) {
+        if (this._redo.length >= this._redo_max) {
+            this._redo.shift();
+        }
+        this._redo.push(data);
+        this.historyController.buttons[1].disabled = false;
+        this.historyController.buttons[2].disabled = false;
+    }
+    clearRedo() {
+        this._redo = [];
+        this.historyController.buttons[1].disabled = true;
+    }
+    onClickHistoryButton(ev) {
+        const target = ev.currentTarget;
+        if (target instanceof HTMLButtonElement && this.ctx) {
+            console.log(target.id);
+            const id = target.id;
+            const w = this.canvas.width;
+            const h = this.canvas.height;
+            switch (id) {
+                case "undo":
+                    const imgDataFromUndo = this._undo.pop();
+                    if (imgDataFromUndo) {
+                        const imgDataToRedo = this.ctx.getImageData(0, 0, w, h);
+                        this.pushRedo(imgDataToRedo);
+                        this.ctx.clearRect(0, 0, w, h);
+                        this.ctx.putImageData(imgDataFromUndo, 0, 0);
+                    }
+                    if (this._undo.length < 1) {
+                        target.disabled = true;
+                    }
+                    break;
+                case "redo":
+                    const imgDataFromRedo = this._redo.pop();
+                    if (imgDataFromRedo) {
+                        const imgDataToUndo = this.ctx.getImageData(0, 0, w, h);
+                        this.pushUndo(imgDataToUndo);
+                        this.ctx.clearRect(0, 0, w, h);
+                        this.ctx.putImageData(imgDataFromRedo, 0, 0);
+                    }
+                    if (this._redo.length < 1) {
+                        target.disabled = true;
+                    }
+                    break;
+                case "clear":
+                    const imgDataToUndo = this.ctx.getImageData(0, 0, w, h);
+                    this.pushUndo(imgDataToUndo);
+                    this.ctx.clearRect(0, 0, w, h);
+                default:
+                    break;
+            }
+        }
+    }
+    initHistoryHandler() {
+        for (const button of this.historyController.buttons) {
+            button.addEventListener('click', this.onClickHistoryButton.bind(this));
+            this.historyController.parent.appendChild(button);
+        }
+        const kakizomeArea = this.canvas.parentElement;
+        if (kakizomeArea) {
+            kakizomeArea.appendChild(this.historyController.parent);
+        }
+    }
+}
+export default class Draw extends HistoryHandler {
     constructor(canvas, canvasMode) {
         super(canvas, canvasMode);
         this._isDtawing = false;
@@ -172,9 +272,8 @@ export default class Draw extends Scaler {
             ["brush-shape"]: "brush",
             ["brush-size"]: 100,
             ["paper-size"]: "hanshi",
-            ["pressure"]: false
+            ["pressure"]: false,
         };
-        this.ctx = canvas.getContext('2d');
         this.startDrawing = this.startDrawing.bind(this);
         this.whileDrawing = this.whileDrawing.bind(this);
         this.endDrawing = this.endDrawing.bind(this);
@@ -262,6 +361,12 @@ export default class Draw extends Scaler {
                 h: this.canvasWrapper.scrollTop
             };
         }
+        if (this.ctx && this.mode === "draw") {
+            const imgDatatoUndo = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+            this.pushUndo(imgDatatoUndo);
+            this.clearRedo();
+            this.historyController.parent.dataset.hide = "hide";
+        }
         const calibration = this.canvas.width / this.canvas.offsetWidth;
         this.lastPoint = { x: (ev.offsetX) * calibration, y: (ev.offsetY) * calibration };
         this.lastPressure = ev.pressure;
@@ -297,6 +402,7 @@ export default class Draw extends Scaler {
         if (!ev.isPrimary)
             return;
         this.isDrawing = false;
+        this.historyController.parent.dataset.hide = "";
     }
     initDraw() {
         if (this.ctx) {

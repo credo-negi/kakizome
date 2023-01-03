@@ -30,12 +30,11 @@ type InputNumber = {
 }
 type DialogContentItem = {
   type: "content",
-  tagName: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "div" | "span" | "figure" | "section" | "img" | "button",
+  tagName: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "div" | "span" | "figure" | "section" | "img",
   classNames?: string[],
   id?: string,
   src?: string,
-  onClick?: string,
-  contents: (string | DialogContentItem | InputSelection | InputNumber |HTMLImageElement )[] | null,
+  contents: (string | DialogContentItem | InputSelection | InputNumber | HTMLImageElement )[] | null,
 }
 type SettingsList = {
   [key: string] : {
@@ -174,12 +173,12 @@ const download: (InputSelection | InputNumber | DialogContentItem)[] = [
         type: "content",
         tagName: "div",
         contents: [
-          {
-            type: "content",
-            tagName: "button",
-            id: "url-to-clipboard",
-            contents: [ "URLをコピー" ]
-          },
+          // {
+          //   type: "content",
+          //   tagName: "button",
+          //   id: "url-to-clipboard",
+          //   contents: [ "URLをコピー" ]
+          // },
           {
             type: "content",
             tagName: "span",
@@ -288,7 +287,7 @@ const penSettings: (InputSelection | InputNumber | DialogContentItem)[] = [
         ]
       },
     ]
-  }
+  },
 ];
 const paperSettings: (InputSelection | InputNumber | DialogContentItem)[] = [
   {
@@ -351,17 +350,17 @@ const paperSettings: (InputSelection | InputNumber | DialogContentItem)[] = [
         ]
       }
     ],
-  }
+  },
 ];
 
 export class Dialog {
-  dialog: HTMLDialogElement;
+  dialog: HTMLDialogElement | HTMLElement;
   dialogOpener: HTMLCollectionOf<Element>;
   _dialogHeaderEN: HTMLSpanElement;
   _dialogHeaderJA: HTMLSpanElement;
   _dialogCloser: HTMLButtonElement;
   _dialogContent: HTMLDivElement;
-  constructor ( dialog: HTMLDialogElement, dialogOpener: HTMLCollectionOf<Element> ) {
+  constructor ( dialog: HTMLDialogElement | HTMLElement, dialogOpener: HTMLCollectionOf<Element> ) {
     this.dialog = dialog;
     this.dialogOpener = dialogOpener;
     this._dialogHeaderEN = document.createElement('span');
@@ -411,7 +410,12 @@ export class Dialog {
   }
 
   openDialog (ev: Event) {
-    this.dialog.showModal();
+    if ( ('HTMLDialogElement' in window) && this.dialog instanceof HTMLDialogElement ) {
+      this.dialog.showModal();
+    } else {
+      this.dialog.dataset.open = "open";
+    }
+    
   }
 
   closeDialog(ev: Event) {
@@ -419,7 +423,11 @@ export class Dialog {
     setTimeout(() => {
       this.resetDialog();
       this.dialog.classList.remove('dialog--closing');
-      this.dialog.close();
+      if ( ('HTMLDialogElement' in window) && this.dialog instanceof HTMLDialogElement ) {
+        this.dialog.close();
+      } else {
+        this.dialog.dataset.open = "";
+      }
     }, 250);
   }
 
@@ -490,7 +498,7 @@ export default class Settings extends Dialog {
     this.downloadCreatedImg = this.downloadCreatedImg.bind(this);
     this.initSettings();
   }
-  appendDialogContentItem (item: InputSelection | InputNumber | DialogContentItem ) {
+  appendDialogContentItem ( item: InputSelection | InputNumber | DialogContentItem ) {
     let element: HTMLElement | null = null;
     switch (item.type) {
       case "content":
@@ -521,7 +529,7 @@ export default class Settings extends Dialog {
     return element;
   }
 
-  onChangeSettingValue (ev: Event) {
+  onChangeSettingValue ( ev: Event ) {
     const target = ev.target;
     if (target instanceof HTMLInputElement ) {
       const targetName = target.name as keyof Draw["editableSettings"];
@@ -557,7 +565,7 @@ export default class Settings extends Dialog {
     }
   }
 
-  appendDialogSettingItem (item: InputSelection | InputNumber ) {
+  appendDialogSettingItem ( item: InputSelection | InputNumber ) {
     const element = document.createElement('section');
     element.classList.add('kakizome--setting--section');
 
@@ -620,11 +628,13 @@ export default class Settings extends Dialog {
         range.min = item.min.toString();
         range.max = item.max.toString();
         range.value = nowValue.toString();
+        range.setAttribute("value", nowValue.toString());
         if ( item.step ) range.step = item.step.toString();
 
         range.addEventListener('change', this.onChangeSettingValue.bind(this));
         inputWrapper.appendChild(range);
         itemWrapper.appendChild(inputWrapper);
+        break;
       default:
         break;
     }
@@ -632,7 +642,7 @@ export default class Settings extends Dialog {
     return element;
   }
 
-  setupDialog (ev: Event) {
+  setupDialog ( ev: Event ) {
     const target = ev.target;
     if ( target instanceof HTMLElement && target.dataset.dialog ) {
       const settings = this.settingsList[target.dataset.dialog];
