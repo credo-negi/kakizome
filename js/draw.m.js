@@ -178,7 +178,7 @@ export class HistoryHandler extends Scaler {
             parent: historyControllerParent,
             buttons: Object.keys(historyControllerButtonIDs).map((key) => {
                 const img = new Image();
-                img.src = `../assets/${historyControllerButtonIDs[key]}_white_24dp.svg`;
+                img.src = `./assets/${historyControllerButtonIDs[key]}_white_24dp.svg`;
                 const button = document.createElement('button');
                 button.classList.add('kakizome--history--controller--button');
                 button.id = key;
