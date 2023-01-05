@@ -177,7 +177,7 @@ const download: (InputSelection | InputNumber | DialogContentItem)[] = [
           //   type: "content",
           //   tagName: "button",
           //   id: "url-to-clipboard",
-          //   contents: [ "URLをコピー" ]
+          //   contents: [ "シェアする" ]
           // },
           {
             type: "content",

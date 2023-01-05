@@ -154,8 +154,8 @@ export class Scaler {
 
   initializeCanvasTouchData ( ev: TouchEvent ) {
     const touches = ev.touches;
-
     if ( touches.length < 2 ) return;
+    ev.preventDefault();
     if ( this.mode === "touch" ) {
       this.touch = true;
       if ( this.canvasWrapper instanceof HTMLElement ) {
@@ -183,6 +183,7 @@ export class Scaler {
   changeCanvasTouchData ( ev: TouchEvent ) {
     const touches = ev.touches;
     if ( touches.length < 2 ) return;
+    ev.preventDefault();
     if ( this.mode === "touch" ) {
       for ( let i = 0; i < 2; i++ ) {
         this.nowTouch = {
@@ -217,8 +218,8 @@ export class Scaler {
   }
 
   init () {
-    this.canvas.addEventListener('touchstart', this.initializeCanvasTouchData);
-    this.canvas.addEventListener('touchmove', this.changeCanvasTouchData);
+    this.canvas.addEventListener('touchstart', this.initializeCanvasTouchData, {passive: false});
+    this.canvas.addEventListener('touchmove', this.changeCanvasTouchData, {passive: false});
     this.canvas.addEventListener('touchend', this.finalizeCanvasTouchData);
     this.canvasMode.addEventListener('change', this.changeCanvasMode);
   }
@@ -287,7 +288,6 @@ export class HistoryHandler extends Scaler {
   onClickHistoryButton (ev: Event) {
     const target = ev.currentTarget;
     if ( target instanceof HTMLButtonElement && this.ctx ) {
-      console.log(target.id);
       const id = target.id;
       const w = this.canvas.width;
       const h = this.canvas.height;
