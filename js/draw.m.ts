@@ -441,7 +441,7 @@ export default class Draw extends HistoryHandler {
     const brushSize = this.editableSettings["brush-size"];
     const rad = (press >= 0.4) ? (brushSize * (press - 0.4) + 16) : (brushSize * press / 2);
     this.ctx.beginPath();
-    this.ctx.arc(arr.x + 20, arr.y + 20, rad, 0, Math.PI * 2);
+    this.ctx.arc(arr.x + 20, arr.y + 20, rad / 2, 0, Math.PI * 2);
     this.ctx.closePath();
     this.ctx.fill();
   }
