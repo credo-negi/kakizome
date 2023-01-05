@@ -70,13 +70,12 @@ body {
   height: 100%;
   max-height: 100%;
   overflow: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 .kakizome--main .kakizome--kakizome_area .kakizome--history--controller {
   position: fixed;
   top: 0;
+  left: 50vw;
+  translate: -50% 0;
   height: 56px;
   display: flex;
   gap: 18px;
