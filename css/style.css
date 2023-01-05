@@ -107,6 +107,7 @@ body {
   scale: 1.2;
 }
 .kakizome--main .kakizome--kakizome_area .kakizome--canvas {
+  display: flex;
   align-self: flex-start;
   margin: auto;
   background-color: white;
